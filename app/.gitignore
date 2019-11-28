@@ -1,0 +1,11 @@
+*.iml
+.gradle
+/local.properties
+/miaomiaozhe/build
+/jd_keplerLib/build
+/.idea
+.DS_Store
+/build
+/gradle
+/captures
+.externalNativeBuild
