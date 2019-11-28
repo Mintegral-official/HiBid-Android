@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import mtg.opensource.hibid.bidder.FacebookBidder;
-import mtg.opensource.hibid.bidder.TestBidder1;
+import mtg.opensource.hibid.bidder.MtgBidder;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +19,7 @@ public class BiddingResponseTest {
         br1.setBiddingPriceUSD(1.11d);
         br1.setBidderClass(FacebookBidder.class);
         br2.setBiddingPriceUSD(2.22d);
-        br2.setBidderClass(TestBidder1.class);
+        br2.setBidderClass(MtgBidder.class);
     }
 
     @After

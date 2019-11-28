@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import mtg.opensource.hibid.bidder.FacebookBidder;
-import mtg.opensource.hibid.bidder.TestBidder1;
+import mtg.opensource.hibid.bidder.MtgBidder;
 import mtg.opensource.hibid.callback.BidRequestCallback;
 import mtg.opensource.hibid.constants.ADType;
 import mtg.opensource.hibid.data.AuctionResult;
@@ -28,7 +28,7 @@ public class HeaderBiddingTransactionTest {
     @Before
     public void prepare() {
         bidders.put(new FacebookBidder(), new BidRequestInfo("567961460375854","567961460375854_567962500375750", FacebookBidder.class));
-        bidders.put(new TestBidder1(), new BidRequestInfo("567961460375854","567961460375854_567962500375750", TestBidder1.class));
+        bidders.put(new MtgBidder(), new BidRequestInfo("92762","21310", MtgBidder.class));
 
         bidRequestCallback = new BidRequestCallback() {
             @Override

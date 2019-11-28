@@ -3,8 +3,6 @@
  */
 package mtg.opensource.hibid.data;
 
-import android.text.TextUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +13,7 @@ public class AuctionResult {
 	private String transactionId = "";
 	private String unitId = "";
 	private BiddingResponse winner = null;
-	private List<BiddingResponse> biddingResponses = new ArrayList<BiddingResponse>();
+	private List<BiddingResponse> otherBidders = new ArrayList<BiddingResponse>();
 
 	public String getTransactionId() {
 		return transactionId;
@@ -38,30 +36,19 @@ public class AuctionResult {
      * @return
      */
 	public BiddingResponse getWinner(){
-		winner = null;
-	    if (biddingResponses != null && biddingResponses.size() > 0) {
-			for (BiddingResponse biddingResponse : biddingResponses) {
-				if(biddingResponse.getBiddingPriceUSD() <= 0.0 || !TextUtils.isEmpty(biddingResponse.getErrorMessage())){
-					continue;
-				}
-				if (winner == null) {
-					winner = biddingResponse;
-				} else {
-					if (winner.getBiddingPriceUSD() < biddingResponse.getBiddingPriceUSD()) {
-						winner = biddingResponse;
-					}
-				}
-			}
-		}
 		return winner;
 	}
 
-	public List<BiddingResponse> getBiddingResponses() {
-		return biddingResponses;
+	public void setWinner(BiddingResponse winner) {
+		this.winner = winner;
 	}
 
-	public void setBiddingResponses(List<BiddingResponse> biddingResponses) {
-		this.biddingResponses = biddingResponses;
+	public List<BiddingResponse> getOtherBidders() {
+		return otherBidders;
+	}
+
+	public void setOtherBidders(List<BiddingResponse> otherBidders) {
+		this.otherBidders = otherBidders;
 	}
 
 }

@@ -3,48 +3,77 @@
  */
 package mtg.opensource.hibid.data;
 
+import java.util.HashMap;
+
 /**
  * Reqeust info for one bidder
  */
 public class BidRequestInfo {
 
-    private String appId;
-    private String placementId;
-    private Class bidderClass;
-    private String platformId;
-    private boolean isTest;
+    public static final String KEY_APP_ID = "KEY_APP_ID";
+    public static final String KEY_APP_KEY = "KEY_APP_KEY";
+    public static final String KEY_PLACEMENT_ID = "KEY_PLACEMENT_ID";
+    public static final String KEY_BIDDER_CLASS = "KEY_BIDDER_CLASS";
+    public static final String KEY_PLATFORM_ID = "KEY_PLATFORM_ID";
 
-    public BidRequestInfo(String appId, String placementId, Class bidderClass){
-        this.appId = appId;
-        this.placementId = placementId;
-        this.bidderClass = bidderClass;
+    private HashMap<String, Object> requestInfoMap = new HashMap<String, Object>();
+
+
+    public BidRequestInfo(){
+
     }
 
-    public BidRequestInfo(String appId, String placementId, Class bidderClass, String platformId, boolean isTest){
-        this.appId = appId;
-        this.placementId = placementId;
-        this.bidderClass = bidderClass;
-        this.platformId = platformId;
-        this.isTest = isTest;
+    public Object get(String key){
+        if (requestInfoMap.containsKey(key)){
+            return requestInfoMap.get(key);
+        }
+        return null;
+    }
+
+    public void put(String key, Object value){
+        if (!requestInfoMap.containsKey(key)){
+            requestInfoMap.put(key,value);
+        }
     }
 
     public String getAppId() {
-        return appId;
+        if (requestInfoMap.containsKey(KEY_APP_ID) &&
+                requestInfoMap.get(KEY_APP_ID) instanceof String){
+            return (String)requestInfoMap.get(KEY_APP_ID);
+        }
+        return null;
+    }
+
+    public String getAppKey() {
+        if (requestInfoMap.containsKey(KEY_APP_KEY) &&
+                requestInfoMap.get(KEY_APP_KEY) instanceof String){
+            return (String)requestInfoMap.get(KEY_APP_KEY);
+        }
+        return null;
     }
 
     public String getPlacementId() {
-        return placementId;
+        if (requestInfoMap.containsKey(KEY_PLACEMENT_ID) &&
+                requestInfoMap.get(KEY_PLACEMENT_ID) instanceof String){
+            return (String)requestInfoMap.get(KEY_PLACEMENT_ID);
+        }
+        return null;
     }
 
     public Class getBidderClass() {
-        return bidderClass;
+        if (requestInfoMap.containsKey(KEY_BIDDER_CLASS) &&
+                requestInfoMap.get(KEY_BIDDER_CLASS) instanceof Class){
+            return (Class)requestInfoMap.get(KEY_BIDDER_CLASS);
+        }
+        return null;
     }
 
     public String getPlatformId() {
-        return platformId;
+        if (requestInfoMap.containsKey(KEY_PLATFORM_ID) &&
+                requestInfoMap.get(KEY_PLATFORM_ID) instanceof String){
+            return (String)requestInfoMap.get(KEY_PLATFORM_ID);
+        }
+        return null;
     }
 
-    public boolean isTest() {
-        return isTest;
-    }
 }

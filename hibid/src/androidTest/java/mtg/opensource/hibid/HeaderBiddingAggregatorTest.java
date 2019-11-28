@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mtg.opensource.hibid.bidder.FacebookBidder;
-import mtg.opensource.hibid.bidder.TestBidder1;
+import mtg.opensource.hibid.bidder.MtgBidder;
 import mtg.opensource.hibid.callback.BidRequestCallback;
 import mtg.opensource.hibid.constants.ADType;
 import mtg.opensource.hibid.data.AuctionResult;
@@ -29,9 +29,9 @@ public class HeaderBiddingAggregatorTest {
     public void prepare() {
 
         BidRequestInfo fb = new BidRequestInfo("567961460375854","567961460375854_567962500375750", FacebookBidder.class);
-        BidRequestInfo test = new BidRequestInfo("567961460375854", "567961460375854_567962500375750",  TestBidder1.class);
+        BidRequestInfo mtg = new BidRequestInfo("92762", "21310",  MtgBidder.class);
         bidderReqs.add(fb);
-        bidderReqs.add(test);
+        bidderReqs.add(mtg);
 
         HeaderBiddingAggregator.init(context);
     }

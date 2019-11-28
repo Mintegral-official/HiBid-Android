@@ -22,11 +22,8 @@
 
 
 -dontwarn com.facebook.**
--dontwarn com.mintegral.**
-
 -keep class com.facebook.**{ *;}
--keep class com.mintegral.**{ *;}
 
--dontwarn mtg.opensource.headerbidding.**
--keep class mtg.opensource.headerbidding.**{ *;}
+-dontwarn mtg.opensource.hibid.**
+-keep class mtg.opensource.hibid.**{ *;}
 

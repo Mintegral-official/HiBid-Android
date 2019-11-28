@@ -3,14 +3,14 @@
  */
 package mtg.opensource.hibid;
 
-import android.content.Context;
-
 import mtg.opensource.hibid.callback.BiddingCallback;
 import mtg.opensource.hibid.data.AuctionNotification;
 import mtg.opensource.hibid.data.BidRequestInfo;
+import mtg.opensource.hibid.data.HiBidContext;
 import mtg.opensource.hibid.exception.BidderInitFailedException;
 import mtg.opensource.hibid.exception.BiddingException;
 import mtg.opensource.hibid.exception.FailedToGetRenderException;
+import mtg.opensource.hibid.exception.SdkIntegratedException;
 
 public interface Bidder {
 
@@ -21,11 +21,17 @@ public interface Bidder {
 	Class getBidderClass();
 
 	/**
+	 * return Bidder Class
+	 * @return
+	 */
+	BidRequestInfo getBidderRequestInfo();
+
+	/**
 	 *  bidder sdk init
 	 * @param biddingContext
 	 * @throws BidderInitFailedException
 	 */
-	void init(Context biddingContext) throws BidderInitFailedException;
+	void init(HiBidContext biddingContext) throws BidderInitFailedException, SdkIntegratedException;
 
 	/**
 	 * bid request

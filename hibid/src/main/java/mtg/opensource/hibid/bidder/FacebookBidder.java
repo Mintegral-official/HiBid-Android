@@ -3,7 +3,6 @@
  */
 package mtg.opensource.hibid.bidder;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.facebook.ads.AudienceNetworkAds;
@@ -15,25 +14,30 @@ import com.facebook.bidding.FBAdBidRequest;
 import com.facebook.bidding.FBAdBidResponse;
 
 import mtg.opensource.hibid.Bidder;
+import mtg.opensource.hibid.LogUtil;
 import mtg.opensource.hibid.callback.BiddingCallback;
 import mtg.opensource.hibid.constants.ADType;
 import mtg.opensource.hibid.data.AuctionNotification;
 import mtg.opensource.hibid.data.BidRequestInfo;
 import mtg.opensource.hibid.data.BiddingResponse;
+import mtg.opensource.hibid.data.HiBidContext;
 import mtg.opensource.hibid.exception.BidderInitFailedException;
 import mtg.opensource.hibid.exception.BiddingException;
 import mtg.opensource.hibid.exception.FailedToGetRenderException;
+import mtg.opensource.hibid.exception.SdkIntegratedException;
 
 /**
  * Facebook bidder adapter
  */
 public class FacebookBidder implements Bidder {
+    private static final String TAG = FacebookBidder.class.getSimpleName();
 
     private static volatile boolean sdkInitialized = false;
 
-    private Context mContext;
+    private HiBidContext mContext;
     private FBAdBidFormat adBidFormat;
-    private FBAdBidResponse bidResponse;
+    private FBAdBidResponse curBidResponsed = null;
+    private BidRequestInfo curBidRequestInfo = null;
 
     @Override
     public Class getBidderClass() {
@@ -41,21 +45,28 @@ public class FacebookBidder implements Bidder {
     }
 
     @Override
-    public void init(Context context) throws BidderInitFailedException{
+    public BidRequestInfo getBidderRequestInfo() {
+        return curBidRequestInfo;
+    }
+
+    @Override
+    public void init(HiBidContext context) throws BidderInitFailedException, SdkIntegratedException{
         try {
             mContext = context;
             if (!sdkInitialized) {
+                AudienceNetworkAds.initialize(mContext.getContext());
                 sdkInitialized = true;
-                AudienceNetworkAds.initialize(context);
             }
         }catch (Exception ex){
             throw new BidderInitFailedException("Facebook Bidder init failed", ex.getCause());
+        }catch (NoClassDefFoundError ex){
+            throw new SdkIntegratedException("Facebook sdk not integrated!", ex.getCause());
         }
 
     }
 
     @Override
-    public void bid(BidRequestInfo bidRequestInfo, String adType, int timeOutMS,
+    public void bid(final BidRequestInfo bidRequestInfo, String adType, int timeOutMS,
                     final BiddingCallback callBack) throws BiddingException {
 
         if(bidRequestInfo == null || mContext == null ){
@@ -71,40 +82,47 @@ public class FacebookBidder implements Bidder {
             adBidFormat = (FBAdBidFormat)object;
         }else {
             BiddingResponse biddingResponse = new BiddingResponse(FacebookBidder.class,
-                    FacebookBidder.this, "Unsupported facebook AD format!");
+                    "Unsupported facebook AD format!",FacebookBidder.this, bidRequestInfo);
             if (callBack != null) {
                 callBack.onBiddingResponse(biddingResponse);
                 return;
             }
         }
 
+        curBidRequestInfo = bidRequestInfo;
+        Object isTestObj = bidRequestInfo.get("isTest");
+        boolean isTest = isTestObj != null ? (boolean) isTestObj  : false;
+
         FBAdBidRequest bidRequest = new FBAdBidRequest(
-                mContext,
-                bidRequestInfo.getAppId(),
-                bidRequestInfo.getPlacementId(),
+                mContext.getContext(),
+                curBidRequestInfo.getAppId(),
+                curBidRequestInfo.getPlacementId(),
                 adBidFormat)
-                .withPlatformId(bidRequestInfo.getPlatformId())
+                .withPlatformId(curBidRequestInfo.getPlatformId())
                 .withTimeoutMS(timeOutMS)
-                .withTestMode(bidRequestInfo.isTest());
+                .withTestMode(isTest);
 
         bidRequest.getFBBid(new FBAdBidRequest.BidResponseCallback() {
             @Override
             public void handleBidResponse(final FBAdBidResponse bidResponse) {
+                BiddingResponse biddingResponse;
                 if (bidResponse != null) {
-                    FacebookBidder.this.bidResponse = bidResponse;
+                    FacebookBidder.this.curBidResponsed = bidResponse;
 
-                    //Currency exchange， to US dollar
-                    BiddingResponse biddingResponse;
                     if(bidResponse.isSuccess()){
+                        /**Currency exchange， to US dollar*/
                         biddingResponse = new BiddingResponse(FacebookBidder.class,
-                                bidResponse.getPrice(), bidResponse.getPayload(), FacebookBidder.this);
+                                bidResponse.getPrice(), bidResponse.getPayload(), FacebookBidder.this, curBidRequestInfo);
                     }else {
                         biddingResponse = new BiddingResponse(FacebookBidder.class,
-                                FacebookBidder.this, bidResponse.getErrorMessage());
+                                bidResponse.getErrorMessage(),FacebookBidder.this, curBidRequestInfo);
                     }
-                    if (callBack != null) {
-                        callBack.onBiddingResponse(biddingResponse);
-                    }
+                }else {
+                    biddingResponse = new BiddingResponse(FacebookBidder.class,
+                            "Facebook bid response is NULL",FacebookBidder.this, curBidRequestInfo);
+                }
+                if (callBack != null) {
+                    callBack.onBiddingResponse(biddingResponse);
                 }
             }
         });
@@ -112,11 +130,13 @@ public class FacebookBidder implements Bidder {
 
     @Override
     public void onAuctionNotification(AuctionNotification notification) {
-        if (bidResponse != null) {
+        if (curBidResponsed != null && mContext != null) {
             if (notification.isWinner()) {
-                bidResponse.notifyWin();
+                LogUtil.i(TAG, "Facebook Bidder Wins");
+                curBidResponsed.notifyWin();
             } else {
-                bidResponse.notifyLoss();
+                LogUtil.i(TAG, "Facebook Bidder Loss");
+                curBidResponsed.notifyLoss();
             }
         }
 
@@ -125,21 +145,25 @@ public class FacebookBidder implements Bidder {
     @Override
     public Object getAdsRender() throws FailedToGetRenderException {
         if (adBidFormat == null){
-            throw new FailedToGetRenderException("Unsupported facebook AD format!");
+            throw new FailedToGetRenderException("Unsupported FACEBOOK AD format!");
+        }
+
+        if (mContext == null){
+            throw new FailedToGetRenderException("HiBidContext == NULL!");
         }
 
         Object adsRender = null;
         switch (adBidFormat){
             case NATIVE:{
-                adsRender = new NativeAd(mContext, bidResponse.getPlacementId());
+                adsRender = new NativeAd(mContext.getContext(), curBidResponsed.getPlacementId());
                 break;
             }
             case INTERSTITIAL:{
-                adsRender = new InterstitialAd(mContext, bidResponse.getPlacementId());
+                adsRender = new InterstitialAd(mContext.getContext(), curBidResponsed.getPlacementId());
                 break;
             }
             case REWARDED_VIDEO:{
-                adsRender = new RewardedVideoAd(mContext, bidResponse.getPlacementId());
+                adsRender = new RewardedVideoAd(mContext.getContext(), curBidResponsed.getPlacementId());
                 break;
             }
             default:
@@ -152,12 +176,12 @@ public class FacebookBidder implements Bidder {
     public Object getAdBidFormat(String adType) {
         FBAdBidFormat fbAdBidFormat = null;
         switch (adType){
-            case ADType.INTERSTITIAL:{
-                fbAdBidFormat = FBAdBidFormat.INTERSTITIAL;
-                break;
-            }
             case ADType.NATIVE:{
                 fbAdBidFormat = FBAdBidFormat.NATIVE;
+                break;
+            }
+            case ADType.INTERSTITIAL:{
+                fbAdBidFormat = FBAdBidFormat.INTERSTITIAL;
                 break;
             }
             case ADType.REWARDED_VIDEO:{

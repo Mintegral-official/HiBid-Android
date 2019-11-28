@@ -9,7 +9,6 @@ import mtg.opensource.hibid.data.AuctionResult;
  * Callback from transaction to developer
  */
 public interface BidRequestCallback {
-    void onSuccess(AuctionResult auctionResult);
 
-    void onFail(String unitId, Throwable e);
+    void onBidRequestCallback(String unitId, AuctionResult auctionResult);
 }

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">HiBidDemo</string>
-    <string name="app_id">567961460375854</string>
-    <string name="interstitial_placement_id">567961460375854_567962500375750</string>
+    <string name="facebook_app_id">409068669673719</string>
+    <string name="facebook_native_placement_id">409068669673719_409069139673672</string>
+    <string name="facebook_interstitial_placement_id">409068669673719_409104739670112</string>
+    <string name="mtg_app_id">92762</string>
+    <string name="mtg_app_key">936dcbdd57fe235fd7cf61c2e93da3c4</string>
+    <string name="mtg_placement_id">21310</string>
 </resources>

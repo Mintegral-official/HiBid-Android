@@ -14,23 +14,27 @@ public class BiddingResponse implements Comparable<BiddingResponse>{
 	private double biddingPriceUSD;
     private Object payload;
 	private Bidder bidder;
+	private BidRequestInfo bidRequestInfo;
 	private String errorMessage;
 
 	public BiddingResponse(){
 
 	}
 
-	public BiddingResponse(Class bidderClass, double biddingPriceUSD, Object payload, Bidder bidder) {
+	public BiddingResponse(Class bidderClass, double biddingPriceUSD, Object payload,
+						   Bidder bidder, BidRequestInfo bidRequestInfo) {
 		this.bidderClass = bidderClass;
 		this.biddingPriceUSD = biddingPriceUSD;
 		this.payload = payload;
 		this.bidder = bidder;
+		this.bidRequestInfo = bidRequestInfo;
 	}
 
-	public BiddingResponse(Class bidderClass, Bidder bidder, String errorMessage) {
+	public BiddingResponse(Class bidderClass, String errorMessage, Bidder bidder, BidRequestInfo bidRequestInfo) {
 		this.bidderClass = bidderClass;
-		this.bidder = bidder;
 		this.errorMessage = errorMessage;
+		this.bidder = bidder;
+		this.bidRequestInfo = bidRequestInfo;
 	}
 
 	public Class getBidderClass() {
@@ -73,21 +77,20 @@ public class BiddingResponse implements Comparable<BiddingResponse>{
         this.errorMessage = errorMessage;
     }
 
-    @Override
+	public BidRequestInfo getBidRequestInfo() {
+		return bidRequestInfo;
+	}
+
+	public void setBidRequestInfo(BidRequestInfo bidRequestInfo) {
+		this.bidRequestInfo = bidRequestInfo;
+	}
+
+	@Override
 	public int compareTo(BiddingResponse other) {
 		if (this.biddingPriceUSD > other.getBiddingPriceUSD()) {
 			return -1;
 		} else if (this.biddingPriceUSD == other.getBiddingPriceUSD()) {
-			int code = 0;
-			if (bidderClass != null && other.getBidderClass() != null) {
-				String bidderClassName = bidderClass.getSimpleName();
-				String otherClassName = other.getBidderClass().getSimpleName();
-				code = bidderClassName.compareTo(otherClassName);
-				if (code > 0){
-					code = 1;
-				}
-			}
-			return code;
+			return 0;
 		} else {
 			return 1;
 		}

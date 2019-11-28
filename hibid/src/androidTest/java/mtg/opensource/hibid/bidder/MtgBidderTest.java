@@ -16,19 +16,19 @@ import mtg.opensource.hibid.exception.BidderInitFailedException;
 import mtg.opensource.hibid.exception.BiddingException;
 
 @RunWith(AndroidJUnit4.class)
-public class TestBidder1Test {
+public class MtgBidderTest {
     private Context context = InstrumentationRegistry.getTargetContext();
 
     @Test
     public void testMTGBidder() {
-        TestBidder1 mb = new TestBidder1();
+        MtgBidder mb = new MtgBidder();
         try {
             mb.init(context);
         }catch (BidderInitFailedException e) {
 
         }
 
-        BidRequestInfo bidRequestInfo = new BidRequestInfo("567961460375854","567961460375854_567962500375750", TestBidder1.class);
+        BidRequestInfo bidRequestInfo = new BidRequestInfo("92762","21310", MtgBidder.class);
         BiddingCallback callback = new BiddingCallback() {
             @Override
             public void onBiddingResponse(BiddingResponse object) {

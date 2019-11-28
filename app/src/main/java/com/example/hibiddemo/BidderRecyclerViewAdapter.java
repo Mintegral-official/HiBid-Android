@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class BidderRecyclerViewAdapter extends RecyclerView.Adapter<BidderRecycl
 
         public void setText(String bidderName, double bidderPrice, String errMessage) {
             tvBidderName.setText(bidderName + ":");
-            tvBidderPrice.setText("$" + String.valueOf(bidderPrice));
+            tvBidderPrice.setText("$" + BigDecimal.valueOf(bidderPrice));
             tvBidderErrMessage.setText(errMessage);
         }
     }

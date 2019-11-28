@@ -15,8 +15,10 @@ import java.util.concurrent.Executors;
 import mtg.opensource.hibid.callback.BidRequestCallback;
 import mtg.opensource.hibid.constants.Constants;
 import mtg.opensource.hibid.data.BidRequestInfo;
+import mtg.opensource.hibid.data.HiBidContext;
 import mtg.opensource.hibid.exception.BidRequestException;
 import mtg.opensource.hibid.exception.BidderInitFailedException;
+import mtg.opensource.hibid.exception.SdkIntegratedException;
 
 /**
  * Entrance class which init bidders and send bid request.
@@ -25,7 +27,7 @@ public class HeaderBiddingAggregator {
 	private static final String TAG = HeaderBiddingAggregator.class.getName();
 
 	/**switch for developers to enable log or not*/
-	private static boolean mIsDebugMode = false;
+	private static boolean mIsDebugMode = true;
 
 	private static ExecutorService executor = Executors.newCachedThreadPool();
 	private static Context context;
@@ -59,9 +61,9 @@ public class HeaderBiddingAggregator {
 	 * @return
 	 * @throws BidRequestException
 	 */
-	public static String requestBid(final List<BidRequestInfo> bidReqs,
+	public static HeaderBiddingTransaction requestBid(final List<BidRequestInfo> bidReqs,
 									final String unitId, final String adType, int timeOutMS,
-									BidRequestCallback bidRequestCallback ) throws BidRequestException {
+									BidRequestCallback bidRequestCallback ) throws BidRequestException, SdkIntegratedException {
 		if (context == null){
 			throw new BidRequestException("Context is null or empty!");
 		}
@@ -95,12 +97,14 @@ public class HeaderBiddingAggregator {
 					Object newInstance = bidderClass.newInstance();
 					if (newInstance instanceof Bidder) {
 						Bidder bidder = (Bidder)newInstance;
-						bidder.init(context);
+						bidder.init(new HiBidContext(context, bidReqs.get(i).getAppId(), bidReqs.get(i).getAppKey()));
 						bidders.put(bidder, bidReqs.get(i));
 					}
 				}
 
 			}
+		}catch (SdkIntegratedException ex){
+			throw ex;
 		}catch (BidderInitFailedException ex){
 			throw new BidRequestException(ex.getMessage());
 		}catch (Exception ex){
@@ -111,9 +115,9 @@ public class HeaderBiddingAggregator {
 		//do runtime bidding
 		HeaderBiddingTransaction transaction =
 				new HeaderBiddingTransaction(executor, unitId, adType, bidRequestCallback);
-		String transId = transaction.startTransaction(bidders, timeOutMS);
+		transaction.startTransaction(bidders, timeOutMS);
 
-		return transId;
+		return transaction;
 
 	}
 
