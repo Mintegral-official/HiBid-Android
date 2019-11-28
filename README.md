@@ -1,6 +1,6 @@
 
 # Documentation of HiBid open-source framework in Android 
-
+[中文](https://github.com/Mintegral-official/HiBid-Android/blob/master/README_CN.md)
 
 
 ## Overview
