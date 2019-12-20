@@ -262,7 +262,7 @@ public class FacebookBidder implements Bidder {
 
 ## Changelog
 
-版本号 | ChangeLog | 发布时间
-------|-----------|------
-1.0.0 | HiBid开源框架发布| 2019.05.10
+| 版本号 | ChangeLog | 发布时间 |
+| ------|-----------|------ |
+| 1.0.0 | HiBid开源框架发布 | 2019.05.10 |
 
