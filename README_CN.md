@@ -1,20 +1,19 @@
 
-# HiBid开源框架Android使用文档
+# HiBid 开源框架 Android 使用文档
 
+[English](https://github.com/Mintegral-official/HiBid-Android/blob/master/README.md)
 
 ## 概要
 
-HiBid是一个聚合了多家支持head-bidding的主流平台的开源框架，可以支持快速、高效地实现多家平台head-bidding的功能。目前已经支持的Network有Facebook、Mintegral。<br/>
-本文档描述Android平台上如何集成并使用HiBid开源框架。
+`HiBid` 是一个聚合了多家支持 `head-bidding` 的主流平台的开源框架，可以支持快速、高效地实现多家平台 `head-bidding` 的功能。目前已经支持的 `Network` 有 `Facebook`、`Mintegral`。
 
-
-
+本文档描述 `Android` 平台上如何集成并使用 `HiBid` 开源框架。
 
 ## 使用说明
 
 ### 对于初始化
 
-在application里的如下方法中调用初始化方法。<br/>
+在 `application` 里的如下方法中调用初始化方法：
 
 ```java
 public class DemoApplication extends Application {
@@ -22,13 +21,14 @@ public class DemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-HeaderBiddingAggregator.init(getApplicationContext());
+        HeaderBiddingAggregator.init(getApplicationContext());
     }
 }
 ```
 
-### 关于Log
-可以通过HeaderBiddingAggregator的setDebugMode()方法来打开开关。
+### 关于 Log
+
+可以通过 `HeaderBiddingAggregator` 的 `setDebugMode()` 方法来打开开关：
 
 ```java
 public class DemoApplication extends Application {
@@ -44,7 +44,7 @@ public class DemoApplication extends Application {
 
 ### 对于如何开始竞价（以Facebook的bidder为例）
 
-1、初始化BidRequestInfo的对象以及它的list集合。
+1. 初始化 `BidRequestInfo` 对象以及它的 `list` 集合:
 
 ```java
 BidRequestInfo fb = new BidRequestInfo("your facebook appId",
@@ -53,7 +53,8 @@ BidRequestInfo fb = new BidRequestInfo("your facebook appId",
                     List<BidRequestInfo> bidderReqs = new ArrayList<BidRequestInfo>();
             bidderReqs.add(fb);
 ```
-2、初始化BidRequestCallback对象。
+
+2. 初始化 `BidRequestCallback` 对象:
 
 ```java
  BidRequestCallback callback = new BidRequestCallback(){
@@ -72,7 +73,8 @@ BidRequestInfo fb = new BidRequestInfo("your facebook appId",
                 }
             };
 ```
-3、调用HeaderBiddingAggregator类的静态方法requestBid。
+
+3. 调用 `HeaderBiddingAggregator` 类的静态方法 `requestBid`:
 
 ```java
 HeaderBiddingAggregator.requestBid(bidderReqs,
@@ -80,16 +82,12 @@ HeaderBiddingAggregator.requestBid(bidderReqs,
 ```
 
 
-### 快速添加自定义Bidder-adapter(以创建Facebook的bidder为例)
+### 快速添加自定义 Bidder-adapter(以创建 Facebook 的 bidder 为例)
 
-1、在你的项目里创建一个类，并实现mtg.opensource.headerbidding.Bidder。（可以参照开源项目里的FacebookBidder类）<br/>
-2、重载Bideer里的所有方法。
-
-
+1. 在你的项目里创建一个类，并实现 `mtg.opensource.headerbidding.Bidder`。（可以参照开源项目里的 `FacebookBidder` 类）
+2. 重载 `Bideer` 里的所有方法。
 
 示例代码如下：
-
-
 
 ```java
 public class FacebookBidder implements Bidder {
@@ -241,22 +239,29 @@ public class FacebookBidder implements Bidder {
 }
 ```
 
+## FAQ
+1. **开源项目目前支持哪几种广告形式？**
 
+开源项目目前仅支持广告类型： `NATIVE`， `INTERSTITIAL`，`REWARDED_VIDEO`。但支持开发者自定义其他广告类型。
 
+2. **竞价返回的价格是什么货币单位？**
 
-##FAQ
-1.**开源项目目前支持哪几种广告形式？**<br/>
-开源项目目前仅支持广告类型： NATIVE， INTERSTITIAL，REWARDED_VIDEO。但支持开发者自定义其他广告类型。<br/>
-2.**竞价返回的价格是什么货币单位？**<br/>
-竞价返回的价格必须是以美元计价的，开发者在自定义adapter的时候，确保其竞价价格单位是美元，不建议使用其他币种和自定义汇率转换。<br/> 
-3.**出价相同的bidder如何排序？**<br/>
-出价格相等的bidder，先返回的bidder,排在最前面,默认排在前面的即为本次竞价的winner。<br/> 
-4.**若返回的竞价都是0代表什么**？<br/> 
-若返回的bidder价格都是0，默认本次竞价没有winner。 <br/>
-5.**如果一家bidder竞价fail了，那么最终返回的是success还是fail?**<br/> 
-我们设置了10S请求超时，如果10s内，有一家bidder返回成功，则返回成功，其他失败的bidder的价格会计为0，并且会在reponse里的otherbidders列表里。
+竞价返回的价格必须是以美元计价的，开发者在自定义 `adapter` 的时候，确保其竞价价格单位是美元，不建议使用其他币种和自定义汇率转换。 
 
-##Changelog
+3. **出价相同的 `bidder` 如何排序？**
+
+出价格相等的 `bidder`，先返回的`bidder`，排在最前面，默认排在前面的即为本次竞价的 `winner`。 
+
+4. **若返回的竞价都是0代表什么**？ 
+
+若返回的 `bidder` 价格都是0，默认本次竞价没有 `winner`。
+
+5. **如果一家 bidder 竞价 fail 了，那么最终返回的是 success 还是 fail?** 
+
+我们设置了 `10S` 请求超时，如果 `10s` 内，有一家 `bidder` 返回成功，则返回成功，其他失败的 `bidder` 的价格会计为0，并且会在 `reponse` 里的 `otherbidders` 列表里。
+
+## Changelog
+
 版本号 | ChangeLog | 发布时间
 ------|-----------|------
 1.0.0 | HiBid开源框架发布| 2019.05.10

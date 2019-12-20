@@ -2,20 +2,16 @@
 # Documentation of HiBid open-source framework in Android 
 [中文](https://github.com/Mintegral-official/HiBid-Android/blob/master/README_CN.md)
 
-
 ## Overview
 
 HiBid is an open source framework that aggregates multiple mainstream platforms that support head-bidding. Developers can quickly and efficiently implement head-bidding services of multiple platforms by using the HiBid open-source framework. Currently, the Network it already supports are Facebook and Mintegral.<br/>
 This document describes how to integrate and integrate the HiBid framework on the Android platform.
-
-
 
 ## How to use
 
 ### Initialize the HiBid SDK
 
 Please initialize in application.
-
 
 ```java
 public class DemoApplication extends Application {
@@ -32,7 +28,6 @@ public class DemoApplication extends Application {
 
 The setDebugMode method can control Debug mode.You can set true to check logs.
 
-
 ```java
 public class DemoApplication extends Application {
 
@@ -44,11 +39,9 @@ public class DemoApplication extends Application {
 }
 ```
 
-
-
 ### Start to bid(For example, Using a Facebook bidder)
 
-1.Initialize the object of BidRequestInfo and its list.
+1. Initialize the object of BidRequestInfo and its list.
 
 ```java
 BidRequestInfo fb = new BidRequestInfo("your facebook appId",
@@ -57,7 +50,8 @@ BidRequestInfo fb = new BidRequestInfo("your facebook appId",
                     List<BidRequestInfo> bidderReqs = new ArrayList<BidRequestInfo>();
             bidderReqs.add(fb);
 ```
-2.Initialize the BidRequestCallback object.
+
+2. Initialize the BidRequestCallback object.
 
 ```java
  BidRequestCallback callback = new BidRequestCallback(){
@@ -76,26 +70,20 @@ BidRequestInfo fb = new BidRequestInfo("your facebook appId",
                 }
             };
 ```
-3.Call requestBid method for the bidding.
+
+3. Call requestBid method for the bidding.
 
 ```java
 HeaderBiddingAggregator.requestBid(bidderReqs,
                     "your unitID","ad_type",10 * 1000, callback);
 ```
 
-
-
-
 ### Custom Bidder-adapter(For example, Creating a Facebook bidder)
 
-1.Create a subclass of mtg.opensource.headerbidding.Bidder in your project.（You can refer to the FacebookBidder.java）<br/>
-2.Override all the methods.<br/>
-
-
+1. Create a subclass of mtg.opensource.headerbidding.Bidder in your project.（You can refer to the FacebookBidder.java）<br/>
+2. Override all the methods.<br/>
 
 Sample code：
-
-
 
 ```java
 public class FacebookBidder implements Bidder {
@@ -247,21 +235,28 @@ public class FacebookBidder implements Bidder {
 }
 ```
 
-
-
 ##FAQ
-1.**What kinds of advertising formats are currently supported by HiBid?**<br/>
-Currently，The ad types we supported: Native,Interstitial RewardVideo. But developers are allowed to customize other ad types.<br/>
-2.**What currency is the price returned by the auction?**<br/>
-The price returned by the auction is in US dollars. When the developer customizes the adapter, Make sure the price is in US dollars and it is not recommended to use other currencies and exchange rate conversions.<br/>
-3.**How does it order the same bidder?**<br/>
+1. **What kinds of advertising formats are currently supported by HiBid?**
+
+Currently，The ad types we supported: Native,Interstitial RewardVideo. But developers are allowed to customize other ad types.
+
+2. **What currency is the price returned by the auction?**
+
+The price returned by the auction is in US dollars. When the developer customizes the adapter, Make sure the price is in US dollars and it is not recommended to use other currencies and exchange rate conversions.
+
+3. **How does it order the same bidder?**
+
 If the bidders with the same prices, the one who returned first, is ranked first,and also is the winner.<br/>
-4.**If the returned bid is 0, what does it mean?**<br/>
-If the returned price is 0, so there is no winner in this auction.<br/>
-5.**If there is a bidder failed, then the final response is success or fail?**<br/>
+4. **If the returned bid is 0, what does it mean?**
+
+If the returned price is 0, so there is no winner in this auction.
+
+5. **If there is a bidder failed, then the final response is success or fail?**
+
 We have a 10S request-timeout. If one bidder returns successfully within 10s, it will return success. And the price of other failed bidders is 0, and they will be in the otherbidders list.
 
-##changelog
+## Changelog
+
 Version | ChangeLog | Date
 ------|-----------|------
 1.0.0 | HiBid open source release| 2019.05.10
